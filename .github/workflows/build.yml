@@ -1,48 +1,11 @@
-name: Build ZMK Firmware
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout config repo
-      uses: actions/checkout@v4
-
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y git cmake ninja-build gperf \
-          ccache dfu-util device-tree-compiler wget \
-          python3-dev python3-pip python3-setuptools python3-tk python3-wheel xz-utils file \
-          make gcc g++ unzip
-        pip install west
-
-    - name: Clone ZMK firmware
-      run: |
-        git clone https://github.com/zmkfirmware/zmk.git zmk
-        cd zmk
-        west init -l app
-        west update
-
-    - name: Build firmware(s) from build.yaml
-      run: |
-        cd zmk
-        while IFS= read -r line; do
-          BOARD=$(echo "$line" | cut -d',' -f1)
-          SHIELD=$(echo "$line" | cut -d',' -f2)
-          echo "🔨 Building $BOARD + $SHIELD ..."
-          west build -s app -d build/$BOARD-$SHIELD -b $BOARD -- -DSHIELD=$SHIELD -DZMK_CONFIG=../config
-          cp build/$BOARD-$SHIELD/zephyr/zephyr.uf2 ../firmware-${BOARD}-${SHIELD}.uf2
-        done < <(yq -r '.include[] | "\(.board),\(.shield)"' ../build.yaml)
-
-    - name: Upload artifact(s)
-      uses: actions/upload-artifact@v4
-      with:
-        name: firmware
-        path: firmware-*.uf2
+- name: Build firmware(s) from build.yaml
+  run: |
+    cd zmk
+    while IFS= read -r line; do
+      BOARD=$(echo "$line" | cut -d',' -f1)
+      SHIELD=$(echo "$line" | cut -d',' -f2)
+      echo "🔨 Building $BOARD + $SHIELD ..."
+      west build -s app -d build/$BOARD-$SHIELD -b $BOARD \
+        -- -DSHIELD=$SHIELD -DZMK_CONFIG=../config -DSHIELD_ROOT=../config/shields
+      cp build/$BOARD-$SHIELD/zephyr/zephyr.uf2 ../firmware-${BOARD}-${SHIELD}.uf2
+    done < <(yq -r '.include[] | "\(.board),\(.shield)"' ../build.yaml)
