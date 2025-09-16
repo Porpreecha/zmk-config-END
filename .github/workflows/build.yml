@@ -30,14 +30,19 @@ jobs:
         west init -l app
         west update
 
-    - name: Build firmware (nice_nano_v2 + my_6x15)
+    - name: Build firmware(s) from build.yaml
       run: |
         cd zmk
-        west build -s app -d build -b nice_nano_v2 -- -DSHIELD=my_6x15 -DZMK_CONFIG=../config
-        cp build/zephyr/zephyr.uf2 ../firmware.uf2
+        while IFS= read -r line; do
+          BOARD=$(echo "$line" | cut -d',' -f1)
+          SHIELD=$(echo "$line" | cut -d',' -f2)
+          echo "🔨 Building $BOARD + $SHIELD ..."
+          west build -s app -d build/$BOARD-$SHIELD -b $BOARD -- -DSHIELD=$SHIELD -DZMK_CONFIG=../config
+          cp build/$BOARD-$SHIELD/zephyr/zephyr.uf2 ../firmware-${BOARD}-${SHIELD}.uf2
+        done < <(yq -r '.include[] | "\(.board),\(.shield)"' ../build.yaml)
 
-    - name: Upload artifact
+    - name: Upload artifact(s)
       uses: actions/upload-artifact@v4
       with:
         name: firmware
-        path: firmware.uf2
+        path: firmware-*.uf2
