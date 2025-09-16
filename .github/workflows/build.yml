@@ -26,13 +26,15 @@ jobs:
     - name: Clone ZMK firmware
       run: |
         git clone https://github.com/zmkfirmware/zmk.git zmk
-        west init -l zmk/app
+        cd zmk
+        west init -l app
         west update
 
     - name: Build firmware (nice_nano_v2 + my_6x15)
       run: |
-        west build -s zmk/app -d build -b nice_nano_v2 -- -DSHIELD=my_6x15 -DZMK_CONFIG=./config
-        cp build/zephyr/zephyr.uf2 firmware.uf2
+        cd zmk
+        west build -s app -d build -b nice_nano_v2 -- -DSHIELD=my_6x15 -DZMK_CONFIG=../config
+        cp build/zephyr/zephyr.uf2 ../firmware.uf2
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
