@@ -1,3 +1,33 @@
-west build -s zmk/app -d build/zodiark_right -b nice_nano_v2 \
-  -- -DSHIELD=zodiark_right -DZMK_CONFIG="${GITHUB_WORKSPACE}/config" \
-     -DSHIELD_ROOT="${GITHUB_WORKSPACE}/config"
+name: Build ZMK Firmware
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: zmkfirmware/zmk-build-arm:stable
+
+    steps:
+      - name: Checkout config repo
+        uses: actions/checkout@v4
+
+      - name: West Init
+        run: west init -l config
+
+      - name: West Update
+        run: west update
+
+      # 👇 อันนี้แหละที่ผมบอกคือ "Workflow build step"
+      - name: West Build (my_6x15)
+        run: |
+          west build -s zmk/app -d build/my_6x15 -b nice_nano_v2 \
+            -- -DSHIELD=my_6x15 \
+               -DZMK_CONFIG="${GITHUB_WORKSPACE}/config" \
+               -DSHIELD_ROOT="${GITHUB_WORKSPACE}/config"
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: build/my_6x15/zephyr/zmk.uf2
