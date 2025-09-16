@@ -11,25 +11,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-    - name: Set up Zephyr
-      uses: zephyrproject-rtos/zephyr-action@v0.12.0
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y git cmake ninja-build gperf \
+          ccache dfu-util device-tree-compiler wget \
+          python3-dev python3-pip python3-setuptools python3-tk python3-wheel xz-utils file \
+          make gcc g++ unzip
+        pip install west
 
-    - name: Install Python deps
-      run: pip install west
-
-    - name: Update west modules
-      run: west update
+    - name: Initialize West and update modules
+      run: |
+        west init -l config
+        west update
 
     - name: Build firmware
       run: |
-        west build -s app -d build -b nice_nano_v2 -- -DZMK_CONFIG=config
-        cp build/zephyr/zephyr.uf2 zephyr.uf2
+        west build -s zmk/app -d build -b nice_nano_v2 -- -DSHIELD=my_6x15 -DZMK_CONFIG=../config
+        cp build/zephyr/zephyr.uf2 firmware.uf2
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: firmware
-        path: zephyr.uf2
+        path: firmware.uf2
