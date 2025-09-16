@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout config repo
       uses: actions/checkout@v4
 
     - name: Install dependencies
@@ -23,14 +23,15 @@ jobs:
           make gcc g++ unzip
         pip install west
 
-    - name: Initialize West and update modules
+    - name: Clone ZMK firmware
       run: |
-        west init -l config
+        git clone https://github.com/zmkfirmware/zmk.git zmk
+        west init -l zmk/app
         west update
 
-    - name: Build firmware
+    - name: Build firmware (nice_nano_v2 + my_6x15)
       run: |
-        west build -s zmk/app -d build -b nice_nano_v2 -- -DSHIELD=my_6x15 -DZMK_CONFIG=../config
+        west build -s zmk/app -d build -b nice_nano_v2 -- -DSHIELD=my_6x15 -DZMK_CONFIG=./config
         cp build/zephyr/zephyr.uf2 firmware.uf2
 
     - name: Upload artifact
