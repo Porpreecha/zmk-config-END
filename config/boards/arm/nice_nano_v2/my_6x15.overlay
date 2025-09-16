@@ -1,0 +1,33 @@
+/ {
+    chosen {
+        zmk,keyboard = &kscan0;
+    };
+
+    kscan0: kscan {
+        compatible = "zmk,kscan-gpio-matrix";
+        diode-direction = "COL2ROW";
+
+        row-gpios = <&gpio0 2 (GPIO_ACTIVE_LOW)>,  /* GP2  */
+                    <&gpio0 3 (GPIO_ACTIVE_LOW)>,  /* GP3  */
+                    <&gpio0 4 (GPIO_ACTIVE_LOW)>,  /* GP4  */
+                    <&gpio0 5 (GPIO_ACTIVE_LOW)>,  /* GP5  */
+                    <&gpio0 6 (GPIO_ACTIVE_LOW)>,  /* GP6  */
+                    <&gpio0 7 (GPIO_ACTIVE_LOW)>;  /* GP7  */
+
+        col-gpios = <&gpio0 8  (GPIO_ACTIVE_LOW)>,  /* GP8  */
+                    <&gpio0 9  (GPIO_ACTIVE_LOW)>,  /* GP9  */
+                    <&gpio0 10 (GPIO_ACTIVE_LOW)>,  /* GP10 */
+                    <&gpio0 11 (GPIO_ACTIVE_LOW)>,  /* GP11 */
+                    <&gpio0 12 (GPIO_ACTIVE_LOW)>,  /* GP12 */
+                    <&gpio0 13 (GPIO_ACTIVE_LOW)>,  /* GP13 */
+                    <&gpio0 14 (GPIO_ACTIVE_LOW)>,  /* GP14 */
+                    <&gpio0 15 (GPIO_ACTIVE_LOW)>,  /* GP15 */
+                    <&gpio0 16 (GPIO_ACTIVE_LOW)>,  /* GP16 */
+                    <&gpio0 17 (GPIO_ACTIVE_LOW)>,  /* GP17 */
+                    <&gpio0 18 (GPIO_ACTIVE_LOW)>,  /* GP18 */
+                    <&gpio0 19 (GPIO_ACTIVE_LOW)>,  /* GP19 */
+                    <&gpio0 20 (GPIO_ACTIVE_LOW)>,  /* GP20 */
+                    <&gpio0 21 (GPIO_ACTIVE_LOW)>,  /* GP21 */
+                    <&gpio0 22 (GPIO_ACTIVE_LOW)>;  /* GP22 */
+    };
+};
