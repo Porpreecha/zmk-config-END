@@ -1,40 +1,12 @@
-name: Build ZMK 6x15 firmware
+- name: Checkout repository
+  uses: actions/checkout@v4
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+- name: Clone ZMK
+  run: git clone --recursive https://github.com/zmkfirmware/zmk.git zmk
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    container:
-      image: docker.io/zmkfirmware/zmk-build-arm:3.5
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Initialize workspace
-        run: |
-          cd zmk
-          west init -l .
-          west update
-          west zephyr-export
-
-      - name: Build firmware
-        run: |
-          cd zmk
-          west build -s app -b nice_nano_v2 \
-            -d ../build/my_6x15 -- \
-            -DSHIELD=my_6x15 \
-            -DZMK_CONFIG=${GITHUB_WORKSPACE}/zmk-config/config
-
-      - name: Upload firmware artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: my_6x15_firmware
-          path: build/my_6x15/zephyr/zmk.uf2
+- name: Initialize workspace
+  run: |
+    cd zmk
+    west init -l .
+    west update
+    west zephyr-export
