@@ -1,43 +1,5 @@
-name: Build ZMK firmware
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y cmake ninja-build gperf ccache dfu-util \
-              device-tree-compiler wget python3-pip python3-setuptools \
-              python3-wheel xz-utils file make gcc
-
-      - name: Install west
-        run: pip3 install --user west
-
-      - name: Initialize west
-        run: |
-          west init -l zmk
-          west update
-          west zephyr-export
-
-      - name: Build firmware (my_6x15)
-        run: |
-          west build -s zmk/app -b nice_nano_v2 \
-            -d build/my_6x15 -- \
-            -DSHIELD=my_6x15 \
-            -DZMK_CONFIG=${GITHUB_WORKSPACE}/config
-
-      - name: Upload firmware artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: my_6x15_firmware
-          path: build/my_6x15/zephyr/zmk.uf2
+- name: Upload firmware artifact
+  uses: actions/upload-artifact@v4
+  with:
+    name: my_6x15_firmware
+    path: build/my_6x15/zephyr/zmk.uf2
