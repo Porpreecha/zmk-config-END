@@ -1,7 +1,9 @@
-name: Build ZMK firmware
+name: Build ZMK 6x15 firmware
 
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
 
 jobs:
@@ -9,28 +11,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout config repo
       - uses: actions/checkout@v3
 
+      # 2️⃣ Install system dependencies
       - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y cmake ninja-build gperf ccache dfu-util \
-              device-tree-compiler wget python3-pip python3-setuptools \
-              python3-wheel xz-utils file make gcc
+            device-tree-compiler wget python3-pip python3-setuptools \
+            python3-wheel xz-utils file make gcc
 
+      # 3️⃣ Install west (Zephyr & ZMK manager)
       - name: Install west
         run: pip3 install --user west
 
-      - name: Clone ZMK firmware
+      # 4️⃣ Clone ZMK firmware
+      - name: Clone ZMK
         run: git clone --recurse-submodules https://github.com/zmkfirmware/zmk.git zmk
 
+      # 5️⃣ Initialize west workspace inside ZMK
+      - name: Init west workspace
+        run: |
+          cd zmk
+          west init -l .
+          west update
+          west zephyr-export
+
+      # 6️⃣ Build firmware
       - name: Build firmware
         run: |
-          west build -s zmk/app -b nice_nano_v2 \
-            -d build/my_6x15 -- \
+          cd zmk
+          west build -s app -b nice_nano_v2 \
+            -d ../build/my_6x15 -- \
             -DSHIELD=my_6x15 \
             -DZMK_CONFIG=${GITHUB_WORKSPACE}/config
 
+      # 7️⃣ Upload artifact
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
