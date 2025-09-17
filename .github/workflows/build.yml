@@ -22,16 +22,24 @@ jobs:
             device-tree-compiler wget python3-pip python3-setuptools \
             python3-wheel xz-utils file make gcc
 
-      # 3️⃣ Install west (ZMK/Zephyr manager)
+      # 3️⃣ Install west (Zephyr & ZMK manager)
       - name: Install west
         run: pip3 install --user west
 
-      # 4️⃣ Clone ZMK firmware (full repository)
-      - name: Clone ZMK
+      # 4️⃣ Clone ZMK firmware (full repository with submodules)
+      - name: Clone ZMK firmware
         run: |
-          git clone --branch main --depth 1 https://github.com/zmkfirmware/zmk.git zmk
+          git clone --recurse-submodules https://github.com/zmkfirmware/zmk.git zmk
 
-      # 5️⃣ Build firmware (6x15 shield)
+      # 5️⃣ Initialize west workspace inside ZMK
+      - name: Initialize west workspace
+        run: |
+          cd zmk
+          west init -l .
+          west update
+          west zephyr-export
+
+      # 6️⃣ Build firmware using shield 6x15
       - name: Build firmware
         run: |
           cd zmk
@@ -40,7 +48,7 @@ jobs:
             -DSHIELD=my_6x15 \
             -DZMK_CONFIG=${GITHUB_WORKSPACE}/config
 
-      # 6️⃣ Upload artifact
+      # 7️⃣ Upload firmware artifact
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
