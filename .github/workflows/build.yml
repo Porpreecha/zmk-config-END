@@ -3,18 +3,16 @@ name: Build ZMK 6x15 firmware
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout config repository
+      # Checkout config repository
       - uses: actions/checkout@v3
 
-      # 2️⃣ Install system dependencies
+      # Install dependencies
       - name: Install dependencies
         run: |
           sudo apt update
@@ -22,16 +20,16 @@ jobs:
             device-tree-compiler wget python3-pip python3-setuptools \
             python3-wheel xz-utils file make gcc
 
-      # 3️⃣ Install west
+      # Install west
       - name: Install west
         run: pip3 install --user west
 
-      # 4️⃣ Clone ZMK release (มี west.yml พร้อม)
+      # Clone ZMK release (v0.3.0)
       - name: Clone ZMK release
         run: |
-          git clone --branch v2025.06 --recurse-submodules https://github.com/zmkfirmware/zmk.git zmk
+          git clone --branch v0.3.0 --recurse-submodules https://github.com/zmkfirmware/zmk.git zmk
 
-      # 5️⃣ Build firmware
+      # Build firmware
       - name: Build firmware
         run: |
           cd zmk
@@ -40,7 +38,7 @@ jobs:
             -DSHIELD=my_6x15 \
             -DZMK_CONFIG=${GITHUB_WORKSPACE}/config
 
-      # 6️⃣ Upload firmware artifact
+      # Upload firmware
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
