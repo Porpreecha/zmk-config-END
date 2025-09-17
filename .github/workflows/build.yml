@@ -9,23 +9,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: docker.io/zmkfirmware/zmk-build-arm:3.5
 
     steps:
-      # 1. Checkout repository ของคุณ
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. ติดตั้ง Python และ west
-      - name: Install Python and West
-        run: |
-          python3 -m pip install --upgrade pip
-          pip install west
-
-      # 3. Clone ZMK repository
       - name: Clone ZMK repository
         run: git clone --recursive https://github.com/zmkfirmware/zmk.git zmk
 
-      # 4. Build firmware
       - name: Build firmware
         run: |
           cd zmk/app
@@ -34,7 +27,6 @@ jobs:
             -DSHIELD=my_6x15 \
             -DZMK_CONFIG=${GITHUB_WORKSPACE}/config
 
-      # 5. Upload artifact
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
