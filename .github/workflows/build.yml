@@ -11,32 +11,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repository ของคุณ
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2. ติดตั้ง Python และ west
       - name: Install Python and West
         run: |
           python3 -m pip install --upgrade pip
           pip install west
 
+      # 3. Clone ZMK repository
       - name: Clone ZMK repository
         run: git clone --recursive https://github.com/zmkfirmware/zmk.git zmk
 
-      - name: Initialize workspace
-        run: |
-          cd zmk
-          west init -l .
-          west update
-          west zephyr-export
-
+      # 4. Build firmware
       - name: Build firmware
         run: |
-          cd zmk
-          west build -s app -b nice_nano_v2 \
-            -d ../build/my_6x15 -- \
+          cd zmk/app
+          west build -b nice_nano_v2 \
+            -d ../../build/my_6x15 -- \
             -DSHIELD=my_6x15 \
             -DZMK_CONFIG=${GITHUB_WORKSPACE}/config
 
+      # 5. Upload artifact
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
