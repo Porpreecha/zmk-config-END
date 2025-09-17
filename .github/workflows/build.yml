@@ -3,8 +3,6 @@ name: Build ZMK firmware
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 jobs:
   build:
@@ -23,13 +21,10 @@ jobs:
       - name: Install west
         run: pip3 install --user west
 
-      - name: Initialize west
-        run: |
-          west init -l zmk
-          west update
-          west zephyr-export
+      - name: Clone ZMK firmware
+        run: git clone --recurse-submodules https://github.com/zmkfirmware/zmk.git zmk
 
-      - name: Build firmware (my_6x15)
+      - name: Build firmware
         run: |
           west build -s zmk/app -b nice_nano_v2 \
             -d build/my_6x15 -- \
