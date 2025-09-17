@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout config repo
+      # 1️⃣ Checkout config repository
       - uses: actions/checkout@v3
 
       # 2️⃣ Install system dependencies
@@ -22,23 +22,16 @@ jobs:
             device-tree-compiler wget python3-pip python3-setuptools \
             python3-wheel xz-utils file make gcc
 
-      # 3️⃣ Install west (Zephyr & ZMK manager)
+      # 3️⃣ Install west (ZMK/Zephyr manager)
       - name: Install west
         run: pip3 install --user west
 
-      # 4️⃣ Clone ZMK firmware
+      # 4️⃣ Clone ZMK firmware (full repository)
       - name: Clone ZMK
-        run: git clone --recurse-submodules https://github.com/zmkfirmware/zmk.git zmk
-
-      # 5️⃣ Initialize west workspace inside ZMK
-      - name: Init west workspace
         run: |
-          cd zmk
-          west init -l .
-          west update
-          west zephyr-export
+          git clone --branch main --depth 1 https://github.com/zmkfirmware/zmk.git zmk
 
-      # 6️⃣ Build firmware
+      # 5️⃣ Build firmware (6x15 shield)
       - name: Build firmware
         run: |
           cd zmk
@@ -47,7 +40,7 @@ jobs:
             -DSHIELD=my_6x15 \
             -DZMK_CONFIG=${GITHUB_WORKSPACE}/config
 
-      # 7️⃣ Upload artifact
+      # 6️⃣ Upload artifact
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
