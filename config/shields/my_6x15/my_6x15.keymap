@@ -4,28 +4,23 @@
 
         default_layer {
             bindings = <
-                &kp ESC     &kp Q &kp W &kp E &kp R &kp T &kp Y &kp U &kp I &kp O &kp P &kp LBKT &kp RBKT &kp BSPC &kp DEL
-                &kp TAB     &kp A &kp S &kp D &kp F &kp G &kp H &kp J &kp K &kp L &kp SEMI &kp SQT  &kp ENTER &kp PGUP &kp HOME
-                &kp LSHIFT  &kp Z &kp X &kp C &kp V &kp B &kp N &kp M &kp COMMA &kp DOT &kp FSLH &kp UP   &kp RSHIFT &kp PGDN &kp END
-                &kp LCTRL   &kp LGUI &kp LALT &mo 1 &kp SPACE &kp SPACE &kp SPACE &mo 2 &kp RALT &kp LEFT &kp DOWN &kp RIGHT &kp RCTRL &none &none
-                &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none
-                &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none
-/ {
-    keymap {
-        compatible = "zmk,keymap";
+                // Row 1
+                &kp ESC &kp 1 &kp 2 &kp 3 &kp 4 &kp 5 &kp 6 &kp 7 &kp 8 &kp 9 &kp 0 &kp MINUS &kp EQUAL &kp BSPC &kp GRAVE
 
-        default_layer {
-            bindings = <
-                &kp ESC     &kp Q &kp W &kp E &kp R &kp T &kp Y &kp U &kp I &kp O &kp P &kp LBKT &kp RBKT &kp BSPC &kp DEL
-                &kp TAB     &kp A &kp S &kp D &kp F &kp G &kp H &kp J &kp K &kp L &kp SEMI &kp SQT  &kp ENTER &kp PGUP &kp HOME
-                &kp LSHIFT  &kp Z &kp X &kp C &kp V &kp B &kp N &kp M &kp COMMA &kp DOT &kp FSLH &kp UP   &kp RSHIFT &kp PGDN &kp END
-                &kp LCTRL   &kp LGUI &kp LALT &mo 1 &kp SPACE &kp SPACE &kp SPACE &mo 2 &kp RALT &kp LEFT &kp DOWN &kp RIGHT &kp RCTRL &none &none
-                &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none
-                &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none
-            >;
-        };
-    };
-};
+                // Row 2
+                &kp TAB &kp Q &kp W &kp E &kp R &kp T &kp Y &kp U &kp I &kp O &kp P &kp LBKT &kp RBKT &kp BSLH &kp DEL
+
+                // Row 3
+                &kp CAPS &kp A &kp S &kp D &kp F &kp G &kp H &kp J &kp K &kp L &kp SQT &kp SEMI &kp ENTER &none &none
+
+                // Row 4
+                &kp LSHFT &kp Z &kp X &kp C &kp V &kp B &kp N &kp M &kp COMMA &kp DOT &kp FSLH &kp RSHFT &kp UP &none &none
+
+                // Row 5
+                &kp LCTRL &kp LGUI &kp LALT &kp SPACE &kp SPACE &kp SPACE &kp SPACE &kp RALT &kp RGUI &kp MENU &kp RCTRL &kp LEFT &kp DOWN &kp RIGHT &none
+
+                // Row 6 (Extra row)
+                &kp F1 &kp F2 &kp F3 &kp F4 &kp F5 &kp F6 &kp F7 &kp F8 &kp F9 &kp F10 &kp F11 &kp F12 &kp PRINT &kp SCROLLLOCK &kp PAUSE
             >;
         };
     };

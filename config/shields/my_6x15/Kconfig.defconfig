@@ -1,2 +1,4 @@
+if SHIELD_MY_6X15
 config ZMK_KEYBOARD_NAME
-    default "My 6x15"
+    default "My 6x15 Keyboard"
+endif
