@@ -1,11 +1,40 @@
-- name: Upload firmware artifact
-  uses: actions/upload-artifact@v4
-  with:
-    # ชื่อ artifact ที่จะแสดงบน GitHub Actions
-    name: my_6x15_firmware
-    # เส้นทางไปยังไฟล์ .uf2 ที่ถูกสร้างขึ้นหลัง build
-    path: build/my_6x15/zephyr/zmk.uf2
-    # Optional: หากต้องการรวมหลายไฟล์ ใช้ wildcards เช่น:
-    # path: build/my_6x15/zephyr/*.uf2
-    # Optional: กำหนด retention-days หากต้องการเก็บ artifact นานกว่า default
-    # retention-days: 7
+name: Build ZMK 6x15 firmware
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: docker.io/zmkfirmware/zmk-build-arm:3.5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Initialize workspace
+        run: |
+          cd zmk
+          west init -l .
+          west update
+          west zephyr-export
+
+      - name: Build firmware
+        run: |
+          cd zmk
+          west build -s app -b nice_nano_v2 \
+            -d ../build/my_6x15 -- \
+            -DSHIELD=my_6x15 \
+            -DZMK_CONFIG=${GITHUB_WORKSPACE}/zmk-config/config
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my_6x15_firmware
+          path: build/my_6x15/zephyr/zmk.uf2
